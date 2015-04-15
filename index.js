@@ -1,4 +1,5 @@
-var Server = require('voxel-server')
+// Requires the latest checkout of https://github.com/kumavis/voxel-server. Not sure how it differs from npm version
+var Server = require('/Users/alanszlosek/Projects/voxel-server')
 var perlin = require('voxel-perlin-terrain')
 var generator = perlin(Date.now(), 0, 5, 20)
 var websocket = require('websocket-stream')
@@ -20,6 +21,7 @@ var settings = {
 var server = Server(settings)
 
 
+// These don't seem to work
 // bind events
 server.on('missingChunk', function(chunk){
 console.log('missing chunk');
