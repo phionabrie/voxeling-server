@@ -8,7 +8,6 @@ var generator = require('voxel-simplex-terrain')({
 })
 var websocket = require('websocket-stream')
 var voxel = require('voxel')
-var chunkSize = 32
 
 var settings = {
   // various [voxel-engine]() settings to be sent to the clients
@@ -27,69 +26,6 @@ var settings = {
     jumpMaxSpeed: Number(.010)
   },
   generateVoxelChunk: generator
-
-/*
-  generate: function(x,y,z) {
-    var width = chunkSize
-    // Shift negative values into positive space ... 0 to chunkSize
-    var xidx = (width + x % width) % width
-    var yidx = (width + y % width) % width
-    var zidx = (width + z % width) % width
-    var idx = xidx + (yidx * width) + (zidx * width * width)
-    var chunkIndex = [
-        Math.floor(x/chunkSize),
-        Math.floor(y/chunkSize),
-        Math.floor(z/chunkSize)
-    ]
-    var lo = chunkIndex.map(function(i) {
-        return i * chunkSize;
-    })
-    var hi = lo.map(function(i) {
-        return i + chunkSize;
-    })
-    // which chunk are we at?
-    var chunkPosition = chunkIndex.join('|')
-    var data
-    if (!(chunkPosition in voxelsByChunk)) {
-        console.log('Generating chunk ' + chunkPosition)
-        voxelsByChunk[chunkPosition] = generator(lo, hi)
-        //console.log(voxelsByChunk[chunkPosition])
-    }
-    if (idx < 0 || idx > maxVoxelIndex) {
-        console.log('Fetching voxel at ' + idx);
-    }
-    return voxelsByChunk[chunkPosition][idx]
-  }
-*/
-
-
-  // should run a test with a function that generates a base floor at y=1, but every x%2 is 1 voxel higher
-  //generate: voxelTypeChooser
-  /*
-  generate: function(x,y,z) {
-    var width = chunkSize
-    // Shift negative values into positive space ... 0 to chunkSize
-    var xidx = (width + x % width) % width
-    var yidx = (width + y % width) % width
-    var zidx = (width + z % width) % width
-    var idx = xidx + (yidx * width) + (zidx * width * width)
-    // which chunk are we at?
-    var chunkPosition = '' + Math.floor(x/chunkSize)
-        + '|'
-        + Math.floor(y/chunkSize)
-        + '|'
-        + Math.floor(z/chunkSize)
-    var data
-    if (!(chunkPosition in voxelsByChunk)) {
-        console.log('Generating chunk ' + chunkPosition)
-        voxelsByChunk[chunkPosition] = generator([x, y, z], chunkSize)
-    }
-    if (idx < 0 || idx > maxVoxelIndex) {
-        console.log('Fetching voxel at ' + idx);
-    }
-    return voxelsByChunk[chunkPosition][idx]
-  }
-  */
 }
 
 // create server
@@ -101,18 +37,6 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-/* 
-  game.voxels.on('missingChunk', function(p) {
-    var chunkSize = 32;
-    var voxels = generator(p, chunkSize)
-    var chunk = {
-      position: p,
-      dims: [chunkSize, chunkSize, chunkSize],
-      voxels: voxels
-    }
-    game.showChunk(chunk)
-  })
-*/
 
 // These don't seem to work
 // bind events
