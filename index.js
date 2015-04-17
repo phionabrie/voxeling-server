@@ -1,18 +1,18 @@
 // Requires the latest checkout of https://github.com/kumavis/voxel-server. Not sure how it differs from npm version
 var Server = require('/Users/alanszlosek/Projects/voxel-server')
-var perlin = require('voxel-perlin-terrain')
-var generator = perlin('moo', 0, 5, 20)
+//var generator = require('voxel-perlin-terrain')('moo', 0, 5)
+var generator = require('voxel-simplex-terrain')({
+    chunkDistance: 2,
+    chunkSize: 32,
+    seed: 98237498723987234
+})
 var websocket = require('websocket-stream')
 var voxel = require('voxel')
-var ndarray = require('ndarray')
 var chunkSize = 32
-var voxelsByChunk = {
-}
-//var generator = voxel.generator['Hilly Terrain']
 
 var settings = {
   // various [voxel-engine]() settings to be sent to the clients
-  avatarInitialPosition: [0, 60, 0],
+  avatarInitialPosition: [3, 60, 3],
   // list of incomming custom events to forward to all clients
   //forwardEvents: ['attack','voiceChat']
 
@@ -26,10 +26,53 @@ var settings = {
     //jumpSpeed: Number(.001),
     jumpMaxSpeed: Number(.010)
   },
+  generateVoxelChunk: generator
+
+/*
   generate: function(x,y,z) {
-    var xx = Math.abs(x % chunkSize)
-    var yy = Math.abs(y % chunkSize)
-    var zz = Math.abs(z % chunkSize)
+    var width = chunkSize
+    // Shift negative values into positive space ... 0 to chunkSize
+    var xidx = (width + x % width) % width
+    var yidx = (width + y % width) % width
+    var zidx = (width + z % width) % width
+    var idx = xidx + (yidx * width) + (zidx * width * width)
+    var chunkIndex = [
+        Math.floor(x/chunkSize),
+        Math.floor(y/chunkSize),
+        Math.floor(z/chunkSize)
+    ]
+    var lo = chunkIndex.map(function(i) {
+        return i * chunkSize;
+    })
+    var hi = lo.map(function(i) {
+        return i + chunkSize;
+    })
+    // which chunk are we at?
+    var chunkPosition = chunkIndex.join('|')
+    var data
+    if (!(chunkPosition in voxelsByChunk)) {
+        console.log('Generating chunk ' + chunkPosition)
+        voxelsByChunk[chunkPosition] = generator(lo, hi)
+        //console.log(voxelsByChunk[chunkPosition])
+    }
+    if (idx < 0 || idx > maxVoxelIndex) {
+        console.log('Fetching voxel at ' + idx);
+    }
+    return voxelsByChunk[chunkPosition][idx]
+  }
+*/
+
+
+  // should run a test with a function that generates a base floor at y=1, but every x%2 is 1 voxel higher
+  //generate: voxelTypeChooser
+  /*
+  generate: function(x,y,z) {
+    var width = chunkSize
+    // Shift negative values into positive space ... 0 to chunkSize
+    var xidx = (width + x % width) % width
+    var yidx = (width + y % width) % width
+    var zidx = (width + z % width) % width
+    var idx = xidx + (yidx * width) + (zidx * width * width)
     // which chunk are we at?
     var chunkPosition = '' + Math.floor(x/chunkSize)
         + '|'
@@ -39,11 +82,14 @@ var settings = {
     var data
     if (!(chunkPosition in voxelsByChunk)) {
         console.log('Generating chunk ' + chunkPosition)
-        voxelsByChunk[chunkPosition] = generator([xx, yy, zz], chunkSize)
+        voxelsByChunk[chunkPosition] = generator([x, y, z], chunkSize)
     }
-    data = voxelsByChunk[chunkPosition]
-    return data[xx + yy*chunkSize + zz*chunkSize*chunkSize]
+    if (idx < 0 || idx > maxVoxelIndex) {
+        console.log('Fetching voxel at ' + idx);
+    }
+    return voxelsByChunk[chunkPosition][idx]
   }
+  */
 }
 
 // create server
