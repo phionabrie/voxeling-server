@@ -21,7 +21,7 @@ var settings = {
 
   // custom
   controls: {
-    discreteFire: false,
+    discreteFire: true, // Require mousedown/mouseup cycle to trigger fire
     //speed: Number(1),
     //maxWalkSpeed: Number(10),
     //jumpSpeed: Number(.001),
@@ -30,10 +30,10 @@ var settings = {
 
 /*
   avatarInitialPosition: [50,100,50],
-  materials: ['grass', 'obsidian', 'dirt', 'whitewool', 'crate', 'brick', 'brick'],
   generateVoxelChunk: generator
 */
 
+  materials: ['grass', 'brick', 'dirt', 'obsidian', 'whitewool', 'crate'],
   generateChunks: true,
   // 1 block rise, each ring of chunks out from center
   generate: function(x, y, z) {
@@ -57,34 +57,16 @@ var settings = {
 // create server
 var server = Server(settings)
 
-// Generate our first chunk
-
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
-}
-
-
-// These don't seem to work
-// bind events
 server.on('missingChunk', function(chunk){
   console.log('missing chunk');
-return;
-    var chunkSize = 32;
-    chunk.voxels = generator(chunk.position, chunkSize)
-    var chunk = {
-      position: p,
-      dims: [chunkSize, chunkSize, chunkSize],
-      voxels: voxels
-    }
-    game.showChunk(chunk)
 })
 server.on('client.join', function(client){
-    console.log('client join');
+  console.log('client join');
 })
 server.on('client.leave', function(client){
 })
 server.on('client.state', function(state){
-    console.log('Client: ' + state);
+  console.log('Client: ' + state);
 })
 server.on('chat', function(message){
 })
@@ -97,4 +79,10 @@ server.on('error', function(error){
 websocket.createServer({port: 8080}, function(stream) {
     console.log('hello');
     server.connectClient(stream);
+
+  // handle websocket close / user left
+  stream.on('close', function(error) {
+    console.log('stream closed')
+    server.removeClient(stream)
+  })
 })
