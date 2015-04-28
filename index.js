@@ -83,6 +83,6 @@ websocket.createServer({port: 8080}, function(stream) {
   // handle websocket close / user left
   stream.on('close', function(error) {
     console.log('stream closed')
-    server.removeClient(stream)
+    server.removeClient(stream.id)
   })
 })
