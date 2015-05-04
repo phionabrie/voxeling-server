@@ -35,7 +35,10 @@ cd voxeling-server
 ```
 
 Start the server: `node index.js`
+
 In another terminal, start the client: `./client.sh`
+
+Go to `http://localhost:9966` in your browser
 
 Future Plans
 ===
