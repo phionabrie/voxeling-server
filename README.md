@@ -1,8 +1,7 @@
 Screenshots
 ====
 
-(Max on Bricks)[http://greaterscope.net/images/voxeling1.png]
-(Grass Overpass)[http://greaterscope.net/images/voxeling2.png]
+[Max on Bricks](http://greaterscope.net/images/voxeling1.png), [Grass Overpass](http://greaterscope.net/images/voxeling2.png)
 
 Installation
 ===
