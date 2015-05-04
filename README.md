@@ -16,7 +16,7 @@ git clone https://github.com/alanszlosek/voxel-client.git
 git clone https://github.com/alanszlosek/voxel-engine.git
 ```
 
-Now symlink each of those folders into the node_modules
+Now symlink each of those folders into the `node_modules` folder:
 
 ```
 cd ~/node_modules/
@@ -35,7 +35,7 @@ cd voxeling-server
 ```
 
 Start the server: `node index.js`
-Start the client: `./client.sh`
+In another terminal, start the client: `./client.sh`
 
 Future Plans
 ===
