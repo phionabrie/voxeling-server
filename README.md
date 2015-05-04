@@ -1,7 +1,13 @@
+Screenshots
+====
+
+(Max on Bricks)[http://greaterscope.net/images/voxeling1.png]
+(Grass Overpass)[http://greaterscope.net/images/voxeling2.png]
+
 Installation
 ===
 
-It's not the easiest install, my apologies. We install all npm modules to the top-level `node_modules` folder (couldn't get npm dedupe to work) so that, for instance, when a change is made a change to the voxel repo, all modules that depend on it will be using the same modified code.
+It's not the easiest install, my apologies. We install all npm modules to the top-level `node_modules` folder (couldn't get npm dedupe to work) so that, for instance, when a change is made to the voxel repo, all modules that depend on it will be using the same modified code.
 
 ```
 npm install beefy browserify duplex-emitter extend hat three minecraft-skin toolbar voxel-control voxel-crunch voxel-highlight voxel-mesh voxel-player voxel-raycast voxel-texture voxel-view websocket-stream ws inherits microtime tapes aabb-3d collide-3d-tilemap gl-matrix interact kb-controls pin-it raf spatial-events spatial-trigger tape tic voxel-physical voxel-region-change
