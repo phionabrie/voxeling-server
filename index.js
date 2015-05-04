@@ -25,7 +25,7 @@ var settings = {
     //speed: Number(1),
     //maxWalkSpeed: Number(10),
     //jumpSpeed: Number(.001),
-    jumpMaxSpeed: Number(.010)
+    jumpMaxSpeed: Number(.01)
   },
 
 /*

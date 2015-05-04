@@ -92,6 +92,7 @@ function defaultSetup(game, avatar, client) {
       var hit = raycast()
       if (hit) {
         game.createBlock(hit.adjacent, currentMaterial)
+        client.emitter.emit('set', hit.adjacent, currentMaterial)
       }
     }
   })
