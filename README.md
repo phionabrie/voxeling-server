@@ -6,6 +6,8 @@ Screenshots
 Installation
 ===
 
+Seems to only work with node v0.10.x. Version 0.12 encounters strange problems with some of the modules.
+
 It's not the easiest install, my apologies. We install all npm modules to the top-level `node_modules` folder (couldn't get npm dedupe to work) so that, for instance, when a change is made to the voxel repo, all modules that depend on it will be using the same modified code.
 
 ```
