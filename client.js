@@ -2,14 +2,15 @@ var createClient = require('voxel-client')
 var highlight = require('voxel-highlight')
 var extend = require('extend')
 var voxelPlayer = require('voxel-player')
+var toolbar = require('toolbar')
 var game
 
-module.exports = function(opts, setup) {
+
+var client = function(opts, setup) {
   setup = setup || defaultSetup
   opts = extend({}, opts || {})
-console.log('hey');
 
-  var client = createClient(opts.server || "ws://127.0.0.1:8080/")
+  var client = createClient(opts.server || "ws://localhost:8080/", opts)
   
   client.emitter.on('noMoreChunks', function(id) {
     console.log("Attaching to the container and creating player")
@@ -21,7 +22,7 @@ console.log('hey');
 
     // create the player from a minecraft skin file and tell the
     // game to use it as the main player
-    var avatar = createPlayer('player.png')
+    var avatar = createPlayer(client.avatarImage)
     window.avatar = avatar
     avatar.possess()
     var settings = game.settings.avatarInitialPosition
@@ -35,6 +36,7 @@ console.log('hey');
 function defaultSetup(game, avatar, client) {
   // highlight blocks when you look at them, hold <Ctrl> for block placement
   var blockPosPlace, blockPosErase
+  var currentMaterial = 1
   var hl = game.highlighter = highlight(game, { color: 0xff0000 })
   hl.on('highlight', function (voxelPos) { blockPosErase = voxelPos })
   hl.on('remove', function (voxelPos) { blockPosErase = null })
@@ -46,9 +48,7 @@ function defaultSetup(game, avatar, client) {
     if (ev.keyCode === 'R'.charCodeAt(0)) avatar.toggle()
   })
 
-  // block interaction stuff, uses highlight data
-  var currentMaterial = 1
-
+/*
   game.on('fire', function (target, state) {
     var position = blockPosPlace
     if (position) {
@@ -63,4 +63,38 @@ function defaultSetup(game, avatar, client) {
       }
     }
   })
+*/
+
+  game.materialSelector = toolbar({el: '#tools'})
+  game.materialSelector.on('select', function(item) {
+    // This must be a number, or bad things happen
+    currentMaterial = Number(item)
+  })
+
+  // right click block creation
+  function raycast(dist) {
+    dist = dist || 100
+    var pos = game.cameraPosition()
+    var vec = game.cameraVector()
+    console.log(vec);
+    return game.raycastVoxels(pos, vec, dist)
+  }
+  window.addEventListener('mousedown', function(e) {
+    var position
+    if (e.which === 1) {
+      position = blockPosErase
+      if (position) {
+        game.setBlock(position, 0)
+        console.log("Erasing point at " + JSON.stringify(position))
+        client.emitter.emit('set', position, 0)
+      }
+    } else if (e.which === 3) {
+      var hit = raycast()
+      if (hit) {
+        game.createBlock(hit.adjacent, currentMaterial)
+      }
+    }
+  })
 }
+
+client({server: "ws://" + window.location.hostname + ":8080/"})

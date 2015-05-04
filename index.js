@@ -76,6 +76,15 @@ server.on('error', function(error){
     console.log(error);
 })
 
+// Chunks are generated right when engine object is created,
+// this listener will be set after those events have fired
+server.on('generateChunk', function(chunkPos) {
+  // The problem now is that i'd rather store chunks in the database in crunched form, to save on space
+})
+
+//server.game.handleChunkGeneration()
+
+
 websocket.createServer({port: 8080}, function(stream) {
     console.log('hello');
     server.connectClient(stream);
