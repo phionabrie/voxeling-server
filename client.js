@@ -12,6 +12,7 @@ var client = function(opts, setup) {
 
   var client = createClient(opts.server || "ws://localhost:8080/", opts)
   
+  // not sure whether we need to do this anymore
   client.emitter.on('noMoreChunks', function(id) {
     console.log("Attaching to the container and creating player")
     var container = opts.container || document.body

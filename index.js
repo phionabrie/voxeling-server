@@ -1,5 +1,6 @@
 // Requires the latest checkout of https://github.com/kumavis/voxel-server. Not sure how it differs from npm version
 var Server = require('voxel-server')
+var fs = require('fs')
 var chunkSize = 32
 /*
 var generator = require('voxel-simplex-terrain')({
@@ -14,8 +15,9 @@ var settings = {
   chunkSize: chunkSize,
   chunkDistance: 4,
   // various [voxel-engine]() settings to be sent to the clients
-  avatarInitialPosition: [3, 60, 3],
+  avatarInitialPosition: [16, 20, 16],
   worldOrigin: [0,0,0],
+  fogDisabled: true,
   // list of incomming custom events to forward to all clients
   //forwardEvents: ['attack','voiceChat']
 
@@ -33,8 +35,43 @@ var settings = {
   generateVoxelChunk: generator
 */
 
-  materials: ['grass', 'brick', 'dirt', 'obsidian', 'whitewool', 'crate'],
-  generateChunks: true,
+  materials: [['grass','grass_dirt', 'dirt'], 'brick', 'dirt', 'obsidian', 'whitewool', 'water', 'lava', 'crate'],
+
+  avatarInitialPosition: [16, 100, 16],
+  generateVoxelChunk: function(chunkInfo, callback) {
+    var self = this
+    var chunkID = chunkInfo.chunkID
+    fs.readFile('/Users/alanszlosek/Projects/voxeling-server/chunks/' + chunkID.replace(/\|/g, '.'), function(err, data) {
+      if (err) {
+        // File not found, generate normally
+        self._generateVoxelChunk(chunkInfo, callback)
+        return
+      }
+      callback(null, data)
+    });
+  },
+
+/*
+  // Hilly Terrain
+  generate: function(i,j,k) {
+  var h0 = 3.0 * Math.sin(Math.PI * i / 12.0 - Math.PI * k * 0.1) + 27;    
+  if(j > h0+1) {
+    return 0; // nothing
+  }
+  if(h0 <= j) {
+    return 1; // grass
+  }
+  var h1 = 2.0 * Math.sin(Math.PI * i * 0.25 - Math.PI * k * 0.3) + 20;
+  if(h1 <= j) {
+    return 2;
+  }
+  if(2 < j) {
+    return Math.random() < 0.1 ? 0x222222 : 0xaaaaaa;
+  }
+  return 3;
+}*/
+
+  
   // 1 block rise, each ring of chunks out from center
   generate: function(x, y, z) {
     var chunkX = Math.abs(Math.floor(x / chunkSize))
@@ -42,7 +79,10 @@ var settings = {
     var chunkZ = Math.abs(Math.floor(z / chunkSize))
 
     if (y == 0) {
-      return 1
+      return 1 // grass and dirt
+    }
+    if (y > -20 && y < 0) {
+      return 3 // dirt
     }
 
     var out = Math.max(chunkX, chunkZ)
@@ -51,6 +91,7 @@ var settings = {
     }
     return 0
   }
+  
 
 }
 
@@ -75,14 +116,15 @@ server.on('set', function(pos, val, client){
 server.on('error', function(error){
     console.log(error);
 })
-
-// Chunks are generated right when engine object is created,
-// this listener will be set after those events have fired
-server.on('generateChunk', function(chunkPos) {
-  // The problem now is that i'd rather store chunks in the database in crunched form, to save on space
+server.on('flushChunk', function(chunkID, chunk) {
+  chunk.hasChanges = false;
+  fs.writeFile('/Users/alanszlosek/Projects/voxeling-server/chunks/' + chunkID.replace(/\|/g, '.'), new Buffer(chunk.voxels), function(err) {
+    if (err) {
+      return console.log(err)
+    }
+    console.log('Saved chunk ' + chunkID);
+  });
 })
-
-//server.game.handleChunkGeneration()
 
 
 websocket.createServer({port: 8080}, function(stream) {
